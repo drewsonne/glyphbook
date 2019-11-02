@@ -1,0 +1,40 @@
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+}
+
+h1 {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    grid-gap: 0px;
+    width: 100vw;
+    height: 100vh;
+}
+.title {
+    background-color: #f8f9fa!important;
+    grid-column: 1 / 16;
+    grid-row: 1 / 3;
+
+    padding-left: 3%;
+    padding-top: 1.5%;
+}
+.workspace {
+    grid-column: 3 / 16;
+    grid-row: 3 / 21;
+}
+.toolbar {
+    grid-column: 1 / 3;
+    grid-row: 3 / 21;
+}
+
+canvas#notebook[resize] {
+    width: 100%;
+    height: 100%;
+}
