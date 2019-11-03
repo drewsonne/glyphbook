@@ -10,11 +10,19 @@
     <script src="js/paper-full.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
     <script type="text/javascript">
-      paper.install(window)
-      let grid
-      let artifact
 
       window.onload = function () {
+        paper.install(window)
+
+        paper.setup('notebook')
+
+        let grid
+        let artifact
+        let annotationController
+
+        let gridLayer = new Layer()
+        let artifactLayer = new Layer()
+        let annotationLayer = new Layer()
 
         function render () {
           grid.draw(view)
@@ -22,10 +30,29 @@
           artifact.fitToView(view)
         }
 
-        paper.setup('notebook')
+        gridLayer.activate()
+        grid = new GBGrid(gridLayer)
+        grid.on('first-draw', function () {
+          artifactLayer.activate()
+          artifact = new GBArtifact()
+          artifact.on('first-draw', function () {
+            annotationController = new GBAnnotations(annotationLayer)
+          })
 
-        grid = new GBGrid()
-        artifact = new GBArtifact()
+          $.ajax(
+            '/glyphbook/api/v1/artifact/6716.json',
+            {
+              success: function (data, status) {
+                artifact.set_href(
+                  data.media[0].href,
+                  view,
+                )
+                render()
+              },
+            },
+          )
+
+        }).draw(view)
 
         let resizeTimer
         view.onResize = function (event) {
@@ -36,20 +63,18 @@
           }, 10)
         }
 
-        $.ajax(
-          '/glyphbook/api/v1/artifact/6716.json',
-          {
-            success: function (data, status) {
-              artifact.set_href(
-                data.media[0].href,
-                view,
-              )
-              render()
-            },
-          },
-        ).done(function () {
+        view.onMouseDown = function (event) {
+          annotationController.handleMouseDown(event)
+        }
 
-        })
+        view.onMouseDrag = function (event) {
+          annotationController.handleMouseDrag(event)
+        }
+
+        view.onMouseUp = function (event) {
+          annotationController.handleMouseUp(event)
+        }
+
       }
 
     </script>
