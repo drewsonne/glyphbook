@@ -75,50 +75,11 @@
         view.onMouseDrag = function (event) {
           annotationController.handleMouseDrag(event)
         }
-      
+
         view.onMouseUp = function (event) {
           annotationController.handleMouseUp(event)
         }
-        imageObj.position = view.center
-        imageObj.bringToFront()
-        imageObj.on('load', function () {
-          let xScaleFactor = undefined
-          let yScaleFactor = undefined
-          if (imageObj.height > view.bounds.height) {
-            let targetHeight = view.bounds.height * 0.9
-            yScaleFactor = targetHeight / imageObj.height
-          }
 
-          if (imageObj.width > view.bounds.width) {
-            let targetWidth = view.bounds.width * 0.9
-            xScaleFactor = targetWidth / imageObj.width
-          }
-
-          let scaleFactor = Math.min(yScaleFactor, xScaleFactor)
-          imageObj.scale(scaleFactor)
-        })
-
-      }
-
-      function render () {
-        renderGrid()
-        flushImage()
-      }
-
-      window.onload = function () {
-        paper.setup('notebook')
-
-        view.onResize = handleResize
-
-        $.ajax(
-          '/glyphbook/api/v1/artifact/6716.json',
-          {
-            success: function (data, status) {
-              imageHref = data.media[0].href
-              render()
-            },
-          },
-        )
       }
 
     </script>
