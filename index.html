@@ -6,25 +6,103 @@
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script src="js/jquery-3.4.1.min.js" type="text/javascript"></script>
     <link href="css/app.css" rel="stylesheet">
-    <script type="text/paperscript" canvas="notebook">
+    <script src="js/paper-core.js" type="text/javascript"></script>
+    <script src="js/paper-full.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      paper.install(window)
+      let imageHref
+      let gridItems = {
+        'x': [],
+        'y': [],
+      }
+      let imageObj
+      let resizeTimer
+
+      function handleResize (event) {
+        clearTimeout(resizeTimer)
+        resizeTimer = setInterval(function () {
+          renderGrid()
+          if (imageHref !== undefined) {
+            flushImage()
+          }
+          clearTimeout(resizeTimer)
+        }, 500)
+      }
+
+      function renderGrid () {
         // Create a layer for the background grid
-
-        for(var xPos = 0; xPos < view.bounds.width; xPos +=20) {
-          var aLine = new paper.Path.Line(
-            [xPos+1, view.bounds.top],
-            [xPos+1, view.bounds.bottom]
-          );
-          aLine.strokeColor = new Color((xPos % 100) === 0 ? 0.5: 0.9);
+        for (var xPos = 0; xPos < view.bounds.width; xPos += 20) {
+          if (xPos in gridItems.x) {
+            gridItems.x[xPos].remove()
+          }
+          gridItems.x[xPos] = new paper.Path.Line(
+            [xPos + 1, view.bounds.top],
+            [xPos + 1, view.bounds.bottom],
+          )
+          gridItems.x[xPos].strokeColor = new Color(
+            (xPos % 100) === 0 ? 0.5 : 0.9)
         }
 
-        for(var yPos = 0; yPos < view.bounds.bottom; yPos +=20) {
-          var aLine = new paper.Path.Line(
-            [view.bounds.left, yPos+1],
-            [view.bounds.right, yPos+1]
-          );
-          aLine.strokeColor = new Color((yPos % 100) === 0 ? 0.5: 0.9);
+        for (var yPos = 0; yPos < view.bounds.bottom; yPos += 20) {
+          if (yPos in gridItems.y) {
+            gridItems.y[yPos].remove()
+          }
+          gridItems.y[yPos] = new paper.Path.Line(
+            [view.bounds.left, yPos + 1],
+            [view.bounds.right, yPos + 1],
+          )
+          gridItems.y[yPos].strokeColor = new Color(
+            (yPos % 100) === 0 ? 0.5 : 0.9)
         }
+      }
 
+      function flushImage () {
+        if (imageObj === undefined) {
+          imageObj = new Raster({source: imageHref})
+        }
+        imageObj.position = view.center
+        imageObj.bringToFront()
+        imageObj.on('load', function () {
+          let xScaleFactor = undefined
+          let yScaleFactor = undefined
+          if (imageObj.height > view.bounds.height) {
+            let targetHeight = view.bounds.height * 0.9
+            yScaleFactor = targetHeight / imageObj.height
+          }
+
+          if (imageObj.width > view.bounds.width) {
+            let targetWidth = view.bounds.width * 0.9
+            xScaleFactor = targetWidth / imageObj.width
+          }
+
+          let scaleFactor = Math.min(yScaleFactor, xScaleFactor)
+          imageObj.scale(scaleFactor)
+        })
+
+      }
+
+      function render () {
+        renderGrid()
+        flushImage()
+      }
+
+      window.onload = function () {
+        paper.setup('notebook')
+
+        view.onResize = handleResize
+
+        $.ajax(
+          '/glyphbook/api/v1/artifact/6716.json',
+          {
+            success: function (data, status) {
+              imageHref = data.media[0].href
+              render()
+            },
+          },
+        ).done(function () {
+
+        })
+      }
 
     </script>
 
@@ -39,7 +117,5 @@
     </div>
     <div class="toolbar">Toolbar</div>
 </div>
-<script src="js/paper-core.js" type="text/javascript"></script>
-<script src="js/paper-full.js" type="text/javascript"></script>
 
 </body>
