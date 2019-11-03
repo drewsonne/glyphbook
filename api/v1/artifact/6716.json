@@ -1,0 +1,22 @@
+{
+  "site": "quirigua",
+  "identifiers": {
+    "schele_number": "6716"
+  },
+  "description": "Stela c, detail of creation date 13.0.0.0.0 4 ajaw 8 kumk'u.",
+  "architectural_feature": "stela",
+  "chronological_era": "late-classical",
+  "culture": "maya",
+  "iconographic_features": [
+    "astronomy"
+  ],
+  "publications": [
+    "L. Schele and D. Freidel, A Forest of Kings: The Untold Story of the Ancient Maya 1990:83, Fig. 2:11",
+    "D. Freidel, L. Schele and J. Parker, Maya Cosmos: Three Thousand Years on the Shaman's Path 1993:64, Fig. 2:2"
+  ],
+  "media": [
+    {
+      "href": "/glyphbook/media/IMG0043.jpg"
+    }
+  ]
+}
