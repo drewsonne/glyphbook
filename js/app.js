@@ -149,6 +149,11 @@ class GBArtifact extends EventHandler {
   }
 }
 
+const TOP_LEFT = 1
+const TOP_RIGHT = 2
+const BOTTOM_RIGHT = 3
+const BOTTOM_LEFT = 4
+
 class GBAnnotation {
   constructor (point) {
     this.topLeft = point
@@ -165,7 +170,33 @@ class GBAnnotation {
     }
     this.rectangle = new Path.Rectangle(this.rect)
     this.rectangle.bringToFront()
+    this.rectangle.strokeWidth = 2
     this.rectangle.strokeColor = 'red'
+    let that = this
+    this.rectangle.on('click', function (event) {
+      that.handleClick(event)
+    })
+  }
+
+  handleClick (event) {
+    this.rectangle.selected = true
+    this.categoriseClickPoint(event.point)
+  }
+
+  categoriseClickPoint (point) {
+    if (this.getDistanceToPoint('bottomRight', point)) {
+      debugger
+    } else if (this.getDistanceToPoint('bottomLeft', point)) {
+      debugger
+    } else if (this.getDistanceToPoint('topRight', point)) {
+      debugger
+    } else if (this.getDistanceToPoint('topLeft', point)) {
+      debugger
+    }
+  }
+
+  getDistanceToPoint (corner, point) {
+    return this.rectangle.bounds[corner].subtract(point).length < 4
   }
 }
 
