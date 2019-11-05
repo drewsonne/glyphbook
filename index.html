@@ -21,25 +21,19 @@
         let artifact
         let annotationController
 
-        let gridLayer = new Layer()
-        let artifactLayer = new Layer()
-        let annotationLayer = new Layer()
-
         function render () {
           grid.draw(view)
           artifact.draw(view)
           artifact.fitToView(view)
         }
 
-        gridLayer.activate()
-        grid = new GBGrid(gridLayer)
+        grid = new GBGrid()
         grid.on('first-draw', function () {
           console.log('grid: first-draw')
-          artifactLayer.activate()
           artifact = new GBArtifact()
           artifact.on('first-draw', function () {
             console.log('artifact: first-draw')
-            annotationController = new GBAnnotations(annotationLayer)
+            annotationController = new GBAnnotations()
           })
 
           $.ajax(
