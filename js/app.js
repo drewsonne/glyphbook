@@ -149,10 +149,17 @@ class GBArtifact extends EventHandler {
   }
 }
 
+const TOP_LEFT = 1
+const TOP_RIGHT = 2
+const BOTTOM_RIGHT = 3
+const BOTTOM_LEFT = 4
+
 class GBAnnotation {
   constructor (point) {
     this.topLeft = point
     this.rect = new Rectangle(this.topLeft, new Size(1, 1))
+    this.resizeCorner = undefined
+    this.doSelect = false
   }
 
   include (point) {
@@ -165,7 +172,75 @@ class GBAnnotation {
     }
     this.rectangle = new Path.Rectangle(this.rect)
     this.rectangle.bringToFront()
+    this.rectangle.strokeWidth = 2
     this.rectangle.strokeColor = 'red'
+    this.rectangle.selected = this.doSelect
+    let that = this
+
+    this.rectangle.onMouseDown = function (event) {
+      that.handleMouseDown(event)
+    }
+    this.rectangle.onMouseUp = function (event) {
+      that.handleMouseUp(event)
+    }
+    this.rectangle.onMouseDrag = function (event) {
+      that.handleMouseDrag(event)
+    }
+  }
+
+  handleMouseDrag (event) {
+    switch (this.resizeCorner) {
+      case TOP_LEFT:
+        this.rect = new Rectangle(event.point, this.rect.bottomRight)
+        break
+      case TOP_RIGHT:
+        this.rect = new Rectangle(
+          new Point(this.rect.topLeft.x, event.point.y),
+          new Point(event.point.x, this.rect.bottomRight.y),
+        )
+        break
+      case BOTTOM_LEFT:
+        this.rect = new Rectangle(
+          new Point(event.point.x, this.rect.topLeft.y),
+          new Point(this.rect.bottomRight.x, event.point.y),
+        )
+        break
+      case BOTTOM_RIGHT:
+        this.rect = new Rectangle(this.topLeft, event.point)
+        break
+    }
+    this.flush()
+    event.stopPropagation()
+  }
+
+  handleMouseDown (event) {
+    this.doSelect = true
+    this.categoriseClickPoint(event.point)
+    event.stopPropagation()
+  }
+
+  handleMouseUp (event) {
+    this.doSelect = false
+    this.resizeCorner = undefined
+    this.rectangle.selected = false
+    event.stopPropagation()
+  }
+
+  categoriseClickPoint (point) {
+    if (this.getDistanceToPoint('bottomRight', point)) {
+      this.resizeCorner = BOTTOM_RIGHT
+    } else if (this.getDistanceToPoint('bottomLeft', point)) {
+      this.resizeCorner = BOTTOM_LEFT
+    } else if (this.getDistanceToPoint('topRight', point)) {
+      this.resizeCorner = TOP_RIGHT
+    } else if (this.getDistanceToPoint('topLeft', point)) {
+      this.resizeCorner = TOP_LEFT
+    }
+
+  }
+
+  getDistanceToPoint (corner, point) {
+    return this.rectangle.bounds[corner].subtract(point).length < 10
   }
 }
 
