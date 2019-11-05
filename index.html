@@ -33,9 +33,11 @@
         gridLayer.activate()
         grid = new GBGrid(gridLayer)
         grid.on('first-draw', function () {
+          console.log('grid: first-draw')
           artifactLayer.activate()
           artifact = new GBArtifact()
           artifact.on('first-draw', function () {
+            console.log('artifact: first-draw')
             annotationController = new GBAnnotations(annotationLayer)
           })
 
@@ -43,6 +45,8 @@
             '/glyphbook/api/v1/artifact/6716.json',
             {
               success: function (data, status) {
+                console.log('ajax: success')
+
                 artifact.set_href(
                   data.media[0].href,
                   view,
