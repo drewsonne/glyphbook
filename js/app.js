@@ -150,8 +150,7 @@ class GBArtifact extends EventHandler {
 }
 
 class GBAnnotation {
-  constructor (layer, point) {
-    layer.activate()
+  constructor (point) {
     this.topLeft = point
     this.rect = new Rectangle(this.topLeft, new Size(1, 1))
   }
@@ -171,14 +170,13 @@ class GBAnnotation {
 }
 
 class GBAnnotations {
-  constructor (layer) {
-    this.layer = layer
+  constructor () {
     this.annotations = []
-    this.rect = new GBAnnotation(this.layer)
+    this.rect = new GBAnnotation()
   }
 
   handleMouseDown (event) {
-    this.rect = new GBAnnotation(this.layer, event.point)
+    this.rect = new GBAnnotation(event.point)
     this.rect.include(event.point)
   }
 
