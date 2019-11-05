@@ -45,6 +45,7 @@ class GBGrid extends EventHandler {
   }
 
   draw (paperjs_view) {
+    console.log('grid: draw')
     for (var xPos = 0; xPos < paperjs_view.bounds.width; xPos += 20) {
       if (xPos in this.gridItems.x) {
         this.gridItems.x[xPos].remove()
@@ -104,6 +105,8 @@ class GBArtifact extends EventHandler {
   }
 
   draw (paperjs_view) {
+    console.log('artifact: draw')
+
     if (this.loaded) {
       this.raster.position = paperjs_view.center
       this.raster.bringToFront()
