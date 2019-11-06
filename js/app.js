@@ -240,7 +240,7 @@ class GBAnnotation {
   }
 
   getDistanceToPoint (corner, point) {
-    return this.rectangle.bounds[corner].subtract(point).length < 10
+    return this.rectangle.bounds[corner].subtract(point).length < 20
   }
 }
 
@@ -269,4 +269,8 @@ class GBAnnotations {
     this.annotations.push(this.rect)
     this.rect = undefined
   }
+}
+
+class AnnotationWindow {
+
 }
