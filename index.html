@@ -10,22 +10,27 @@
     <script src="js/paper-core.js" type="text/javascript"></script>
     <script src="js/paper-full.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
+    <script src="js/data.js" type="text/javascript"></script>
     <script type="text/javascript">
+
+      let api
+      let grid
+      let artifact
+      let selectController
+      let annotationController
 
       window.onload = function () {
         paper.install(window)
 
         paper.setup('notebook')
 
-        let grid
-        let artifact
-        let annotationController
-
         function render () {
           grid.draw(view)
           artifact.draw(view)
           artifact.fitToView(view)
         }
+
+        api = new API()
 
         grid = new GBGrid()
         grid.on('first-draw', function () {
@@ -36,20 +41,13 @@
             annotationController = new GBAnnotations()
           })
 
-          $.ajax(
-            '/glyphbook/api/v1/artifact/6716.json',
-            {
-              success: function (data, status) {
-                console.log('ajax: success')
-
-                artifact.set_href(
-                  data.media[0].href,
-                  view,
-                )
-                render()
-              },
-            },
-          )
+          api.artifact('6716').success(function (data) {
+            artifact.set_href(
+              data.media[0].href,
+              view,
+            )
+            render()
+          }).get()
         }).draw(view)
 
         let resizeTimer
